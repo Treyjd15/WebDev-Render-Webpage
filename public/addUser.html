@@ -6,17 +6,17 @@
 
 <body> 
   <div id= "message"></div>
-  <h2>Please add a new assignment</h2>
+  <h2>Main Administrative Page</h2>
   
-  <form method="post" action="/exam/addAssignment">
-  <div style = "float:left; width: 200px;">Student Username </div>
+  <form method="post" action="/exam/addUser">
+    <div style = "float:left; width: 200px;">User Name</div>
     <input type="text" name="username" placeholder="username"><br>
-  <div style = "float:left; width: 200px;">Due date </div>
-    <input type="text" name="due" placeholder="due date (2024-04-16)"><br>
-  <div style = "float:left; width: 200px;">Assignment Description </div>
-    <textarea name="description" placeholder="assignment description"></textarea><br>
+  <div style = "float:left; width: 200px;">Pass Word</div>
+    <input type="password" name="password" placeholder="password"><br>
+  <div style = "float:left; width: 200px;">Is Admin</div>
+    <input type ="text" name="isAdmin" placeholder="'student' or 'admin'"><br>
   <br><div style = "float:left; width: 200px;">&nbsp;</div>
-    <input type="submit" value="Submit the assignment">
+    <input type="submit" value="Submit the user info">
   </form>
 
   <br> <a href="/exam/admin">Back to Main Administrative Page</a><br>

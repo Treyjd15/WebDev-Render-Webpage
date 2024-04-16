@@ -77,27 +77,46 @@ router.get('/addAssignment',function(req, res, next) {
   res.sendFile(path.join(__dirname,'..', 'public','addAssignment.html'));
 });
 
-router.post('/addAssignment',function(req, res, next) {
+router.post('/addAssignment', function(req, res, next) {  
   client.query('SELECT * FROM examusers WHERE username = $1', [req.body.username], function(err, result) {
+      if (err) {
+          console.log("unable to query SELECT");
+          return next(err);
+      }
+      if (result.rows.length > 0) {
+          console.log("User exists. Let's add assignment");
+          client.query('INSERT INTO assignment (username, description, due) VALUES($1, $2, $3)', [req.body.username, req.body.description, req.body.due], function(err, result) {
+              if (err) {
+                  console.log("unable to query INSERT");
+                  return next(err);
+              }
+              console.log("Assignment creation is successful");
+              return res.redirect('/exam/addAssignment?message=Created+assignment+successfully');
+          });
+      } else {
+          console.log("User doesn't exist");
+          return res.redirect('/exam/addAssignment?message=User+does+not+exist');
+      }
+  });
+});
+
+router.get('/addUser',function(req, res, next) {
+  res.sendFile(path.join(__dirname,'..', 'public','addUser.html'));
+});
+
+router.post('/addUser', function(req, res, next) {
+  var salt = bcrypt.genSaltSync(10);
+  var password = bcrypt.hashSync(req.body.password, salt);
+
+  console.log('Values to insert:', req.body.username, password, req.body.isadmin); // Log values for debugging
+
+  client.query('INSERT INTO examusers (username, password, isAdmin) VALUES($1, $2, $3)', [req.body.username, password, req.body.isadmin], function(err, result) {
     if (err) {
-      console.log("unable to query SELECT");
-      next(err);
+      console.log("unable to query INSERT");
+      return next(err); // throw error to error.hbs.
     }
-    if (result.rows.length > 0) {
-        console.log("User exist. Let's add assignment");
-        client.query('INSERT INTO assignment (username, description, due) VALUES($1, $2, $3)', [req.body.username, req.body.description,req.body.due], function(err, result) {
-          if (err) {
-            console.log("unable to query INSERT");
-            next(err);
-          }
-          console.log("Assignment creation is successful");
-          res.redirect('/exam/addAssignment');
-        });
-    }
-    else {
-      console.log("user doesn't exist");
-      res.redirect('/exam/addAssignment');
-    }
+    console.log("User creation is successful");
+    res.redirect('/users/addUser?message=We+created+your+account+successfully!');
   });
 });
 
